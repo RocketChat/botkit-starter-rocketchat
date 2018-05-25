@@ -10,7 +10,7 @@ var env = require('node-env-file');
 env(__dirname + '/.env');
 
 
-var Botkit = require('botkit');
+var Botkit = require('botkit-rocketchat-connector');
 var debug = require('debug')('botkit:main');
 
 var bot_options = { 
@@ -21,14 +21,11 @@ var bot_options = {
 };
 
 // Create the Botkit controller, which controls all instances of the bot.
-var controller = Botkit.rocketchatbot(bot_options);
-
-// enable advanced botkit studio metrics
-require('botkit-studio-metrics')(controller);
+var controller = Botkit(bot_options);
 
 var normalizedPath = require("path").join(__dirname, "skills");
-require("fs").readdirSync(normalizedPath).forEach(function(file) {
-  require("./skills/" + file)(controller);
+    require("fs").readdirSync(normalizedPath).forEach(function(file) {
+    require("./skills/" + file)(controller);
 });
 
 
@@ -43,8 +40,7 @@ function usage_tip() {
     console.log('~~~~~~~~~~');
     console.log('Botkit Studio Starter Kit');
     console.log('Execute your bot application like this:');
-    console.log('page_token=<MY PAGE TOKEN> verify_token=<MY VERIFY TOKEN> studio_token=<MY BOTKIT STUDIO TOKEN> node bot.js');
-    console.log('Get Facebook token here: https://developers.facebook.com/docs/messenger-platform/implementation')
+    console.log('ESPECIFY RUN APPLICATION')    
     console.log('Get a Botkit Studio token here: https://studio.botkit.ai/')
     console.log('~~~~~~~~~~');
 }
