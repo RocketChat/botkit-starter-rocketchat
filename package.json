@@ -1,31 +1,34 @@
 {
   "name": "botkit-starter-rocketchat",
-  "version": "0.0.0",
-  "description": "A starter kit for building a custom Rocket.Chat bot with Botkit Studio",
+  "version": "0.0.1",
+  "description": "A starter kit for building a custom RocketChat bot with Botkit Studio",
   "main": "bot.js",
-  "repository": "git@github.com:RocketChat/botkit-starter-rocketchat.git",
-  "author": "Tim Kinnane <timkinnane@gmail.com>",
-  "license": "MIT",
-  "private": false,
+  "scripts": {
+    "start": "node bot.js"
+  },
   "dependencies": {
     "body-parser": "^1.15.2",
     "botkit": "^0.6.12",
-    "botkit-rocketchat-connector": "rocketchat/botkit-rocketchat-connector",
-    "botkit-storage-mongo": "^1.0.6",
-    "botkit-studio-metrics": "^0.0.2",
-    "cookie-parser": "^1.4.3",
-    "debug": "^2.3.3",
-    "express": "^4.14.0",
-    "express-hbs": "^1.0.4",
+    "botkit-studio-metrics": "^0.0.4",
+    "debug": "^3.1.0",
     "node-env-file": "^0.1.8",
-    "querystring": "^0.2.0",
     "request": "^2.79.0",
     "wordfilter": "^0.2.6"
   },
   "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RocketChat/botkit-starter-rocketchat"
+  },
+  "bugs": {
+    "url": "https://github.com/RocketChat/botkit-starter-rocketchat"
+  },
+  "homepage": "https://github.com/RocketChat/botkit-starter-rocketchat",
   "keywords": [
     "bots",
     "chatbots",
-    "slack"
-  ]
+    "RocketChat"
+  ],
+  "author": "ben@howdy.ai",
+  "license": "ISC"
 }
