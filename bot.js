@@ -9,8 +9,7 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
 
-if(!process.env.HOST || !process.env.BOT_USER || !process.env.BOT_PASS 
-    || !process.env.SSL || !process.env.ROOMS) {
+if(!process.env.HOST || !process.env.BOT_USER || !process.env.BOT_PASS) {
         usage_tip();
 }
 
@@ -27,8 +26,6 @@ var bot_options = {
     rocketchat_host: process.env.HOST,
     rocketchat_bot_user: process.env.BOT_USER,
     rocketchat_bot_pass: process.env.BOT_PASS,
-    rocketchat_ssl: process.env.SSL,
-    rocketchat_rooms: process.env.ROOMS,
 };
 
 // Store in a JSON file local to the app.
@@ -37,10 +34,15 @@ var bot_options = {
 // Create the Botkit controller, which controls all instances of the bot.
 var controller = Botkit({}, bot_options);
 
-// var normalizedPath = require("path").join(__dirname, "skills");
-//     require("fs").readdirSync(normalizedPath).forEach(function(file) {
-//     require("./skills/" + file)(controller);
-// });
+controller.startBot();
+
+// Send an onboarding message when a new team joins
+//require(__dirname + '/components/onboarding.js')(controller);
+
+var normalizedPath = require("path").join(__dirname, "skills");
+    require("fs").readdirSync(normalizedPath).forEach(function(file) {
+    require("./skills/" + file)(controller);
+});
 
 
 // This captures and evaluates any message sent to the bot as a DM
@@ -49,6 +51,30 @@ var controller = Botkit({}, bot_options);
 // If a trigger is matched, the conversation will automatically fire!
 // You can tie into the execution of the script using the functions
 // controller.studio.before, controller.studio.after and controller.studio.validate
+if (process.env.studio_token) {
+    controller.on('message_received', function(bot, message) {        
+        controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
+            if (!convo) {
+                // no trigger was matched
+                // If you want your bot to respond to every message,
+                // define a 'fallback' script in Botkit Studio
+                // and uncomment the line below.
+                // controller.studio.run(bot, 'fallback', message.user, message.channel);
+            } else {
+                // set variables here that are needed for EVERY script
+                // use controller.studio.before('script') to set variables specific to a script
+                convo.setVar('current_time', new Date());
+            }
+        }).catch(function(err) {
+            bot.reply(message, 'I experienced an error with a request to Botkit Studio: ' + err);
+            debug('Botkit Studio: ', err);
+        });
+    });
+} else {
+    console.log('~~~~~~~~~~');
+    console.log('NOTE: Botkit Studio functionality has not been enabled');
+    console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/');
+}
 
 function usage_tip() {
     console.log('~~~~~~~~~~');
