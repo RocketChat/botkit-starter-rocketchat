@@ -9,24 +9,38 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
 
+if(!process.env.HOST || !process.env.BOT_USER || !process.env.BOT_PASS 
+    || !process.env.SSL || !process.env.ROOMS) {
+        usage_tip();
+}
 
 var Botkit = require('botkit-rocketchat-connector');
 var debug = require('debug')('botkit:main');
 
+// The environment variables from RocketChat is passed in bot_options
+//because the module it's external, so haven't access to .env file
 var bot_options = { 
     studio_token: process.env.studio_token,
     studio_command_uri: process.env.studio_command_uri,
     studio_stats_uri: process.env.studio_command_uri,
     replyWithTyping: true,
+    rocketchat_host: process.env.HOST,
+    rocketchat_bot_user: process.env.BOT_USER,
+    rocketchat_bot_pass: process.env.BOT_PASS,
+    rocketchat_ssl: process.env.SSL,
+    rocketchat_rooms: process.env.ROOMS,
 };
 
-// Create the Botkit controller, which controls all instances of the bot.
-var controller = Botkit(bot_options);
+// Store in a JSON file local to the app.
+//bot_options.json_file_store = __dirname + '/.data/db/'; // store user data in a simple JSON format
 
-var normalizedPath = require("path").join(__dirname, "skills");
-    require("fs").readdirSync(normalizedPath).forEach(function(file) {
-    require("./skills/" + file)(controller);
-});
+// Create the Botkit controller, which controls all instances of the bot.
+var controller = Botkit({}, bot_options);
+
+// var normalizedPath = require("path").join(__dirname, "skills");
+//     require("fs").readdirSync(normalizedPath).forEach(function(file) {
+//     require("./skills/" + file)(controller);
+// });
 
 
 // This captures and evaluates any message sent to the bot as a DM
@@ -39,8 +53,9 @@ var normalizedPath = require("path").join(__dirname, "skills");
 function usage_tip() {
     console.log('~~~~~~~~~~');
     console.log('Botkit Studio Starter Kit');
+    console.log('You problably forget to update your environment variables');
     console.log('Execute your bot application like this:');
-    console.log('ESPECIFY RUN APPLICATION')    
-    console.log('Get a Botkit Studio token here: https://studio.botkit.ai/')
+    console.log('HOST=<MY HOST> BOT_USER=<MY BOT NAME> BOT_PASS=<MY BOT PASSWORD> SSL=<BOOLEAN> ROOMS=<CHANNELS> node bot.js');
+    console.log('Get a Botkit Studio token here: https://studio.botkit.ai/');
     console.log('~~~~~~~~~~');
 }
