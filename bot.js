@@ -16,7 +16,7 @@ if(!process.env.HOST || !process.env.BOT_USER || !process.env.BOT_PASS) {
 var Botkit = require('botkit-rocketchat-connector');
 var debug = require('debug')('botkit:main');
 
-// The environment variables from RocketChat is passed in bot_options
+// the environment variables from RocketChat is passed in bot_options
 //because the module it's external, so haven't access to .env file
 var bot_options = { 
     studio_token: process.env.studio_token,
@@ -28,16 +28,19 @@ var bot_options = {
     rocketchat_bot_pass: process.env.BOT_PASS,
 };
 
-// Store in a JSON file local to the app.
+// store in a JSON file local to the app.
 //bot_options.json_file_store = __dirname + '/.data/db/'; // store user data in a simple JSON format
 
-// Create the Botkit controller, which controls all instances of the bot.
+// create the Botkit controller, which controls all instances of the bot.
 var controller = Botkit({}, bot_options);
 
+// send an onboarding message when a new team joins
+//require(__dirname + '/components/onboarding.js')(controller);
+
+// make the connection with RocketChat.
 controller.startBot();
 
-// Send an onboarding message when a new team joins
-//require(__dirname + '/components/onboarding.js')(controller);
+controller.startTicking();
 
 var normalizedPath = require("path").join(__dirname, "skills");
     require("fs").readdirSync(normalizedPath).forEach(function(file) {
@@ -52,7 +55,8 @@ var normalizedPath = require("path").join(__dirname, "skills");
 // You can tie into the execution of the script using the functions
 // controller.studio.before, controller.studio.after and controller.studio.validate
 if (process.env.studio_token) {
-    controller.on('message_received', function(bot, message) {        
+    // TODO: configure the EVENTS here
+    controller.on('', function(bot, message) {        
         controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
             if (!convo) {
                 // no trigger was matched
