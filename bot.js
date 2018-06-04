@@ -56,14 +56,16 @@ var normalizedPath = require("path").join(__dirname, "skills");
 // controller.studio.before, controller.studio.after and controller.studio.validate
 if (process.env.studio_token) {
     // TODO: configure the EVENTS here
-    controller.on('', function(bot, message) {        
+    controller.on('message_received', function(bot, message) {        
+        console.log("\ninside bot.js controller.on")
         controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
+            console.log("\ninside bot.js controller.studio.runTrigger")
             if (!convo) {
                 // no trigger was matched
                 // If you want your bot to respond to every message,
                 // define a 'fallback' script in Botkit Studio
                 // and uncomment the line below.
-                // controller.studio.run(bot, 'fallback', message.user, message.channel);
+                controller.studio.run(bot, 'fallback', message.user, message.channel);
             } else {
                 // set variables here that are needed for EVERY script
                 // use controller.studio.before('script') to set variables specific to a script
