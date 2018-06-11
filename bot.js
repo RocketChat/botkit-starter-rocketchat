@@ -26,6 +26,8 @@ var bot_options = {
     rocketchat_host: process.env.HOST,
     rocketchat_bot_user: process.env.BOT_USER,
     rocketchat_bot_pass: process.env.BOT_PASS,
+    rocketchat_bot_rooms: process.env.ROOMS,
+    rocketchat_ssl: process.env.SSL,
 };
 
 // store in a JSON file local to the app.
@@ -61,12 +63,14 @@ if (process.env.studio_token) {
         controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
             console.log("\ninside bot.js controller.studio.runTrigger")
             if (!convo) {
+                console.log("\ninside bot.js controller.studio.runTrigger IF")
                 // no trigger was matched
                 // If you want your bot to respond to every message,
                 // define a 'fallback' script in Botkit Studio
                 // and uncomment the line below.
-                controller.studio.run(bot, 'fallback', message.user, message.channel);
+                // controller.studio.run(bot, 'fallback', message.user, message.channel);
             } else {
+                console.log("\ninside bot.js controller.studio.runTrigger ELSE")
                 // set variables here that are needed for EVERY script
                 // use controller.studio.before('script') to set variables specific to a script
                 convo.setVar('current_time', new Date());
