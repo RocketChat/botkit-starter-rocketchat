@@ -17,7 +17,7 @@ var Botkit = require('botkit-rocketchat-connector');
 var debug = require('debug')('botkit:main');
 
 // the environment variables from RocketChat is passed in bot_options
-//because the module it's external, so haven't access to .env file
+// because the module it's external, so haven't access to .env file
 var bot_options = { 
     studio_token: process.env.studio_token,
     studio_command_uri: process.env.studio_command_uri,
@@ -30,16 +30,9 @@ var bot_options = {
     rocketchat_ssl: process.env.SSL,
 };
 
-// store in a JSON file local to the app.
-//bot_options.json_file_store = __dirname + '/.data/db/'; // store user data in a simple JSON format
-
-// create the Botkit controller, which controls all instances of the bot.
+// create the Botkit controller with the configurations of the RocketChatBot
 var controller = Botkit({}, bot_options);
 
-// send an onboarding message when a new team joins
-//require(__dirname + '/components/onboarding.js')(controller);
-
-// make the connection with RocketChat.
 controller.startBot();
 
 controller.startTicking();
