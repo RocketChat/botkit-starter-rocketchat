@@ -22,12 +22,14 @@ var bot_options = {
     studio_token: process.env.studio_token,
     studio_command_uri: process.env.studio_command_uri,
     studio_stats_uri: process.env.studio_command_uri,
-    replyWithTyping: true,
     rocketchat_host: process.env.HOST,
     rocketchat_bot_user: process.env.BOT_USER,
     rocketchat_bot_pass: process.env.BOT_PASS,
-    rocketchat_bot_rooms: process.env.ROOMS,
     rocketchat_ssl: process.env.SSL,
+    rocketchat_bot_room: process.env.ROOM,
+    rocketchat_bot_direct_messages: process.env.DIRECT_MESSAGES,
+    rocketchat_bot_live_chat: process.env.LIVE_CHAT,
+    rocketchat_bot_edited: process.env.EDITED,    
 };
 
 // create the Botkit controller with the configurations of the RocketChatBot
@@ -35,7 +37,7 @@ var controller = Botkit({}, bot_options);
 
 controller.startBot();
 
-controller.startTicking();
+controller.startTicking();  
 
 var normalizedPath = require("path").join(__dirname, "skills");
     require("fs").readdirSync(normalizedPath).forEach(function(file) {
@@ -58,10 +60,10 @@ if (process.env.studio_token) {
             if (!convo) {
                 console.log("\ninside bot.js controller.studio.runTrigger IF")
                 // no trigger was matched
-                // If you want your bot to respond to every message,
+                // If you want your botbot to respond to every message,
                 // define a 'fallback' script in Botkit Studio
                 // and uncomment the line below.
-                // controller.studio.run(bot, 'fallback', message.user, message.channel);
+                controller.studio.run(bot, 'fallback', message.user, message.channel);
             } else {
                 console.log("\ninside bot.js controller.studio.runTrigger ELSE")
                 // set variables here that are needed for EVERY script
