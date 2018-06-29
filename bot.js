@@ -18,7 +18,7 @@ var debug = require('debug')('botkit:main');
 
 // the environment variables from RocketChat is passed in bot_options
 // because the module it's external, so haven't access to .env file
-var bot_options = { 
+var bot_options = {
     studio_token: process.env.studio_token,
     studio_command_uri: process.env.studio_command_uri,
     studio_stats_uri: process.env.studio_command_uri,
@@ -29,7 +29,7 @@ var bot_options = {
     rocketchat_bot_room: process.env.ROOM,
     rocketchat_bot_direct_messages: process.env.DIRECT_MESSAGES,
     rocketchat_bot_live_chat: process.env.LIVE_CHAT,
-    rocketchat_bot_edited: process.env.EDITED,    
+    rocketchat_bot_edited: process.env.EDITED,
 };
 
 // create the Botkit controller with the configurations of the RocketChatBot
@@ -37,7 +37,7 @@ var controller = Botkit({}, bot_options);
 
 controller.startBot();
 
-controller.startTicking();  
+controller.startTicking();
 
 var normalizedPath = require("path").join(__dirname, "skills");
     require("fs").readdirSync(normalizedPath).forEach(function(file) {
@@ -50,36 +50,62 @@ var normalizedPath = require("path").join(__dirname, "skills");
 // Botkit Studio to evaluate for trigger words and patterns.
 // If a trigger is matched, the conversation will automatically fire!
 // You can tie into the execution of the script using the functions
-// controller.studio.before, controller.studio.after and controller.studio.validate
-if (process.env.studio_token) {
-    // TODO: configure the EVENTS here
-    controller.on('message_received', function(bot, message) {        
-        console.log("\ninside bot.js controller.on")
-        controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
-            console.log("\ninside bot.js controller.studio.runTrigger")
-            if (!convo) {
-                console.log("\ninside bot.js controller.studio.runTrigger IF")
-                // no trigger was matched
-                // If you want your botbot to respond to every message,
-                // define a 'fallback' script in Botkit Studio
-                // and uncomment the line below.
-                controller.studio.run(bot, 'fallback', message.user, message.channel);
-            } else {
-                console.log("\ninside bot.js controller.studio.runTrigger ELSE")
-                // set variables here that are needed for EVERY script
-                // use controller.studio.before('script') to set variables specific to a script
-                convo.setVar('current_time', new Date());
-            }
-        }).catch(function(err) {
-            bot.reply(message, 'I experienced an error with a request to Botkit Studio: ' + err);
-            debug('Botkit Studio: ', err);
+// controller.hears('test','message_received,directMessage,liveChat,channel,privateChannel', function(bot, message) {
+
+//   bot.reply(message,'I heard a test message')
+
+// });
+
+// controller.on(['directMessage','liveChat','privateChannel','channel','message'], function(bot, message) {
+//   bot.reply(message,'I heard anything else');
+// });
+
+controller.hears(['color'], 'message_received,directMessage,liveChat,channel,privateChannel', function(bot, message) {
+
+    bot.startConversation(message, function(err, convo) {
+        convo.say('This is an example of using convo.ask with a single callback.');
+
+        convo.ask('What is your favorite color?', function(response, convo) {
+
+            convo.say('Cool, I like ' + response.text + ' too!');
+            convo.next();
+
         });
     });
-} else {
-    console.log('~~~~~~~~~~');
-    console.log('NOTE: Botkit Studio functionality has not been enabled');
-    console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/');
-}
+
+});
+
+
+
+// if (process.env.studio_token) {
+//     // TODO: configure the EVENTS here
+//     controller.on(['directMessage','liveChat','privateChannel','channel','message'], function(bot, message) {
+//         console.log("\ninside bot.js controller.on")
+//         controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
+//             console.log("\ninside bot.js controller.studio.runTrigger")
+//             if (!convo) {
+//                 console.log("\ninside bot.js controller.studio.runTrigger IF")
+//                 // no trigger was matched
+//                 // If you want your botbot to respond to every message,
+//                 // define a 'fallback' script in Botkit Studio
+//                 // and uncomment the line below.
+//                 // controller.studio.run(bot, 'fallback', message.user, message.channel);
+//             } else {
+//                 console.log("\ninside bot.js controller.studio.runTrigger ELSE")
+//                 // set variables here that are needed for EVERY script
+//                 // use controller.studio.before('script') to set variables specific to a script
+//                 convo.setVar('current_time', new Date());
+//             }
+//         }).catch(function(err) {
+//             bot.reply(message, 'I experienced an error with a request to Botkit Studio: ' + err);
+//             debug('Botkit Studio: ', err);
+//         });
+//     });
+// } else {
+//     console.log('~~~~~~~~~~');
+//     console.log('NOTE: Botkit Studio functionality has not been enabled');
+//     console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/');
+// }
 
 function usage_tip() {
     console.log('~~~~~~~~~~');
