@@ -52,19 +52,15 @@ var normalizedPath = require("path").join(__dirname, "skills");
 // You can tie into the execution of the script using the functions
 if (process.env.studio_token) {
     // TODO: configure the EVENTS here
-    controller.on(['directMessage','liveChat','privateChannel','channel','message'], function(bot, message) {
-        console.log("\ninside bot.js controller.on")
+    controller.on(['direct_message','live_chat','mention','message'], function(bot, message) {
         controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
-            console.log("\ninside bot.js controller.studio.runTrigger")
             if (!convo) {
-                console.log("\ninside bot.js controller.studio.runTrigger IF")
                 // no trigger was matched
                 // If you want your botbot to respond to every message,
                 // define a 'fallback' script in Botkit Studio
                 // and uncomment the line below.
                 // controller.studio.run(bot, 'fallback', message.user, message.channel);
             } else {
-                console.log("\ninside bot.js controller.studio.runTrigger ELSE")
                 // set variables here that are needed for EVERY script
                 // use controller.studio.before('script') to set variables specific to a script
                 convo.setVar('current_time', new Date());
@@ -91,6 +87,7 @@ function usage_tip() {
 }
 
 // functions used on tests
+
 // controller.hears('test','message_received,directMessage,liveChat,channel,privateChannel', function(bot, message) {
 //   bot.reply(message,'I heard a test message')
 // });
