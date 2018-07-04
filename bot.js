@@ -28,6 +28,7 @@ var bot_options = {
     rocketchat_bot_pass: process.env.BOT_PASS,
     rocketchat_ssl: process.env.SSL,
     rocketchat_bot_room: process.env.ROOM,
+    rocketchat_bot_mention_rooms: process.env.MENTION_ROOMS,
     rocketchat_bot_direct_messages: process.env.DIRECT_MESSAGES,
     rocketchat_bot_live_chat: process.env.LIVE_CHAT,
     rocketchat_bot_edited: process.env.EDITED,
@@ -52,7 +53,7 @@ var normalizedPath = require("path").join(__dirname, "skills");
 // You can tie into the execution of the script using the functions
 if (process.env.studio_token) {
     // TODO: configure the EVENTS here
-    controller.on(['direct_message','live_chat','mention','message'], function(bot, message) {
+    controller.on(['direct_message','live_chat','channel','mention','message'], function(bot, message) {
         controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function(convo) {
             if (!convo) {
                 // no trigger was matched
@@ -87,21 +88,22 @@ function usage_tip() {
 }
 
 // functions used on tests
+// This can cause problem if the bot have a script for 'test'.
+controller.hears('test','direct_message,live_chat,channel,private_channel', function(bot, message) {
+  bot.reply(message,'I heard a test message')
+});
 
-// controller.hears('test','message_received,directMessage,liveChat,channel,privateChannel', function(bot, message) {
-//   bot.reply(message,'I heard a test message')
-// });
+// This can cause problem if the bot have a script for 'color'.
+controller.hears(['color'], 'direct_message,live_chat,channel,private_channel', function(bot, message) {
+    bot.startConversation(message, function(err, convo) {
+        convo.say('This is an example of using convo.ask with a single callback.');
+        convo.ask('What is your favorite color?', function(response, convo) {
+            convo.say('Cool, I like ' + response.text + ' too!');
+            convo.next();
+        });
+    });
+});
 
-// controller.on(['directMessage','liveChat','privateChannel','channel','message'], function(bot, message) {
+// controller.on(['direct_message','live_chat','mention','message'], function(bot, message) {
 //   bot.reply(message,'I heard anything else');
-// });
-
-// controller.hears(['color'], 'message_received,directMessage,liveChat,channel,privateChannel', function(bot, message) {
-//     bot.startConversation(message, function(err, convo) {
-//         convo.say('This is an example of using convo.ask with a single callback.');
-//         convo.ask('What is your favorite color?', function(response, convo) {
-//             convo.say('Cool, I like ' + response.text + ' too!');
-//             convo.next();
-//         });
-//     });
 // });
