@@ -37,6 +37,9 @@ var bot_options = {
 // create the Botkit controller with the configurations of the RocketChatBot
 var controller = Botkit({}, bot_options);
 
+// imports local conversations to use bot without the botkit api
+require(__dirname + '/components/local_conversations.js')(controller);
+
 controller.startBot();
 
 controller.startTicking();
@@ -86,24 +89,3 @@ function usage_tip() {
     console.log('Get a Botkit Studio token here: https://studio.botkit.ai/');
     console.log('~~~~~~~~~~');
 }
-
-// functions used on tests
-// This can cause problem if the bot have a script for 'test'.
-controller.hears('test','direct_message,live_chat,channel,private_channel', function(bot, message) {
-  bot.reply(message,'I heard a test message')
-});
-
-// This can cause problem if the bot have a script for 'color'.
-controller.hears(['color'], 'direct_message,live_chat,channel,private_channel', function(bot, message) {
-    bot.startConversation(message, function(err, convo) {
-        convo.say('This is an example of using convo.ask with a single callback.');
-        convo.ask('What is your favorite color?', function(response, convo) {
-            convo.say('Cool, I like ' + response.text + ' too!');
-            convo.next();
-        });
-    });
-});
-
-// controller.on(['direct_message','live_chat','mention','message'], function(bot, message) {
-//   bot.reply(message,'I heard anything else');
-// });
