@@ -16,7 +16,14 @@
     "request": "^2.79.0",
     "wordfilter": "^0.2.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^5.1.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/RocketChat/botkit-starter-rocketchat"
