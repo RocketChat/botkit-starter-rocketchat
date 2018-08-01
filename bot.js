@@ -27,7 +27,6 @@ var botOptions = {
   rocketchat_bot_user: process.env.BOT_USER,
   rocketchat_bot_pass: process.env.BOT_PASS,
   rocketchat_ssl: process.env.SSL,
-  rocketchat_bot_room: process.env.ROOM,
   rocketchat_bot_mention_rooms: process.env.MENTION_ROOMS,
   rocketchat_bot_direct_messages: process.env.DIRECT_MESSAGES,
   rocketchat_bot_live_chat: process.env.LIVE_CHAT,
@@ -85,7 +84,7 @@ function usageTip () {
   console.log('Botkit Studio Starter Kit')
   console.log('You problably forget to update your environment variables')
   console.log('Execute your bot application like this:')
-  console.log('HOST=<MY HOST> BOT_USER=<MY BOT NAME> BOT_PASS=<MY BOT PASSWORD> SSL=<BOOLEAN> ROOMS=<CHANNELS> node bot.js')
+  console.log('HOST=<MY HOST> BOT_USER=<MY BOT NAME> BOT_PASS=<MY BOT PASSWORD> SSL=<BOOLEAN> node bot.js')
   console.log('Get a Botkit Studio token here: https://studio.botkit.ai/')
   console.log('~~~~~~~~~~')
 }
