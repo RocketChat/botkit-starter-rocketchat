@@ -21,6 +21,7 @@ var debug = require('debug')('botkit:main')
 var botOptions = {
   debug: true,
   studio_token: process.env.studio_token,
+  apiai_token: process.env.apiai_token,
   studio_command_uri: process.env.studio_command_uri,
   studio_stats_uri: process.env.studio_command_uri,
   rocketchat_host: process.env.HOST,
@@ -48,12 +49,27 @@ require('fs').readdirSync(normalizedPath).forEach(function (file) {
   require('./skills/' + file)(controller)
 })
 
+if (!process.env.studio_token) {
+  console.log('~~~~~~~~~~')
+  console.log('NOTE: Botkit Studio functionality has not been enabled')
+  console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/')
+}
+
+if (!process.env.apiai_token) {
+  console.log('~~~~~~~~~~')
+  console.log('NOTE: Dialogflow with apiai functionality has not been enabled')
+  console.log('To enable, pass in a apiai_token parameter with a token from the Dialogflow console)
+}
+
+
 // This captures and evaluates any message sent to the bot as a DM
 // or sent to the bot in the form "@bot message" and passes it to
 // Botkit Studio to evaluate for trigger words and patterns.
 // If a trigger is matched, the conversation will automatically fire!
 // You can tie into the execution of the script using the functions
 if (process.env.studio_token) {
+  console.log('-------------')
+  console.log('Botkit Studio functionality has been enabled')
   // TODO: configure the EVENTS here
   controller.on(['direct_message', 'live_chat', 'channel', 'mention', 'message'], function (bot, message) {
     controller.studio.runTrigger(bot, message.text, message.user, message.channel, message).then(function (convo) {
@@ -73,10 +89,39 @@ if (process.env.studio_token) {
       debug('Botkit Studio: ', err)
     })
   })
-} else {
-  console.log('~~~~~~~~~~')
-  console.log('NOTE: Botkit Studio functionality has not been enabled')
-  console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/')
+// EAR> use else if for apiai token
+} else if (process.env.apiai_token) {
+    console.log('-------------')
+    console.log('Dialogflows apiai functionality has been enabled')
+
+
+    const dialogflowMiddleware = require('botkit-middleware-dialogflow')({
+        token: process.env.apiai_token, version: 'v1'
+      });
+
+    controller.middleware.receive.use(dialogflowMiddleware.receive);
+
+    controller.middleware.format.use(function (bot, message, platform_message, next) {
+        console.log("\n*Inside middleware.format.use")
+        console.log(message)
+        platform_message['text'] = message.fulfillment.speech
+
+        var messages = message.fulfillment.messages
+        for (var i = 0; i < messages.length; i++) {
+                if (messages[i].payload && messages[i].payload.attachments) {
+                    platform_message['attachments'] = messages[i].payload.attachments
+                }
+        }
+
+        if (!platform_message.type) {
+            platform_message.type = 'message';
+        }
+        next();
+    });
+
+    controller.on(['directMessage', 'live_chat', 'channel', 'mention', 'message'], function (bot, message) {
+        bot.reply(message.raw_message, message, bot);
+    });
 }
 
 function usageTip () {
