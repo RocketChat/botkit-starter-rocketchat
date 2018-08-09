@@ -119,8 +119,8 @@ if (process.env.studio_token) {
         next();
     });
 
-    controller.on(['directMessage', 'live_chat', 'channel', 'mention', 'message'], function (bot, message) {
-        bot.reply(message.raw_message, message, bot);
+    controller.on(['direct_message', 'live_chat', 'channel', 'mention', 'message'], function (bot, message) {
+        bot.reply(message, message, bot);
     });
 }
 
