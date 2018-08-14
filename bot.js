@@ -9,7 +9,7 @@
 var env = require('node-env-file')
 env(__dirname + '/.env')
 
-if (!process.env.ROCKETCHAT_URL || !process.env.ROCKETCHAT_USER || !process.env.ROCKETCHAT_PASS) {
+if (!process.env.ROCKETCHAT_URL || !process.env.ROCKETCHAT_USER || !process.env.ROCKETCHAT_PASSWORD) {
   usageTip()
 }
 
