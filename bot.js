@@ -21,7 +21,7 @@ var debug = require('debug')('botkit:main')
 var botOptions = {
   debug: true,
   studio_token: process.env.studio_token,
-  apiai_token: process.env.apiai_token,
+  apiai_keyfile: process.env.apiai_keyfile,
   studio_command_uri: process.env.studio_command_uri,
   studio_stats_uri: process.env.studio_command_uri,
   rocketchat_host: process.env.ROCKETCHAT_URL,
@@ -90,14 +90,15 @@ if (process.env.studio_token) {
       debug('Botkit Studio: ', err)
     })
   })
-// EAR> use else if for apiai token
-} else if (process.env.apiai_token) {
+// apiai and dialogflow
+} else if (process.env.apiai_keyfile) {
     console.log('-------------')
     console.log('Dialogflows apiai functionality has been enabled')
 
 
+    const structProtoToJson = require('./structjson').structProtoToJson;
     const dialogflowMiddleware = require('botkit-middleware-dialogflow')({
-        token: process.env.apiai_token, version: 'v1'
+        keyFilename: process.env.apiai_keyfile, version: 'v2'
       });
 
     controller.middleware.receive.use(dialogflowMiddleware.receive);
@@ -105,12 +106,14 @@ if (process.env.studio_token) {
     controller.middleware.format.use(function (bot, message, platform_message, next) {
         console.log("\n*Inside middleware.format.use")
         console.log(message)
-        platform_message['text'] = message.fulfillment.speech
+        if (message.fulfillment.text) {
+            platform_message['text'] = message.fulfillment.text
+        }
 
         var messages = message.fulfillment.messages
         for (var i = 0; i < messages.length; i++) {
-                if (messages[i].payload && messages[i].payload.attachments) {
-                    platform_message['attachments'] = messages[i].payload.attachments
+                if (messages[i].payload && messages[i].payload.fields.attachments) {
+                    platform_message['attachments'] = structProtoToJson(messages[i].payload).attachments
                 }
         }
 
