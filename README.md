@@ -36,10 +36,10 @@ The image bellow exemplify this integration.
 * Update .env file with your configuration:
 
 NOTE: The bot can be configured to use either Botkit Studio or a Dialogflow APIAI account to fulfill intents depending on which ENV is present. 
-
+      Dialogflow v2 requires a keyfile for authentication. Instructions for generating the keyfile here: https://dialogflow.com/docs/reference/v2-auth-setup
 ```
 studio_token=<BOTKIT STUDIO TOKEN> 
-apiai_token=<DIALOGFLOW TOKEN>
+apiai_keyfile=<PATH TO THE DIALOGFLOW V2 KEYFILE FOR AUTHENTICATION>
 ROCKETCHAT_URL=<ROCKETCHAT HOST>
 ROCKETCHAT_USER=<BOTKIT USER NAME>
 ROCKETCHAT_PASSWORD=<BOTKIT USER PASS>
