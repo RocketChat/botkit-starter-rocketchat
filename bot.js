@@ -56,10 +56,10 @@ if (!process.env.studio_token) {
   console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/')
 };
 
-if (!process.env.apiai_token) {
+if (!process.env.apiai_keyfile) {
   console.log('~~~~~~~~~~')
   console.log('NOTE: Dialogflow with apiai functionality has not been enabled')
-  console.log('To enable, pass in a apiai_token parameter with a token from the Dialogflow console')
+  console.log('To enable, pass in a apiai_keyfile parameter with the path to your service account key.')
 };
 
 
