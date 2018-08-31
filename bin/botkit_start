@@ -2,7 +2,7 @@
 
 set -e
 
-npm install
+npm install --force
 npm install
 
 exec node . "$@"
